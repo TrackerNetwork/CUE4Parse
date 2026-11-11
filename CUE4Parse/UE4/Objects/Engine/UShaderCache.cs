@@ -23,7 +23,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
     public class FTypeSpecificCompressedShaderCode(FArchive Ar)
     {
-        public Dictionary<FGuid, FIndividualCompressedShaderInfo> CompressedShaderInfos = Ar.ReadMap(Ar.Read<FGuid>, Ar.Read<FIndividualCompressedShaderInfo>);
+        public Dictionary<FGuid, FIndividualCompressedShaderInfo> CompressedShaderInfos = Ar.ReadMap(() => Ar.Read<FGuid>(), () => Ar.Read<FIndividualCompressedShaderInfo>());
         public FCompressedShaderCodeChunk[] CodeChunks = Ar.ReadArray(() => new FCompressedShaderCodeChunk(Ar));
     }
 
@@ -85,7 +85,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
                 {
-                    ShaderTypeMap = Ar.ReadMap(Ar.ReadFName, Ar.Read<int>);
+                    ShaderTypeMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
                 }
             }
 
@@ -203,15 +203,15 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 Platform = Ar.Read<EShaderPlatform>();
 
-                ShaderTypeMap = Ar.ReadMap(Ar.ReadFName, Ar.Read<int>);
-                VertexFactoryMap = Ar.ReadMap(Ar.ReadFName, Ar.Read<int>);
+                ShaderTypeMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
+                VertexFactoryMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
             }
 
             ShaderCache = new FShaderCache(Ar);
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.GLOBAL_SHADER_FILE && Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
             {
-                VertexFactoryMap = Ar.ReadMap(Ar.ReadFName, Ar.Read<int>);
+                VertexFactoryMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
             }
 
             NumMaterialShaderMaps = Ar.Read<int>();

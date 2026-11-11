@@ -12,7 +12,7 @@ public class UBiomesSpawnPointsGrid : UDataAsset
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        SpawnPoints = Ar.ReadArray(Ar.ReadBulkArray<FVector2D>);
+        SpawnPoints = Ar.ReadArray(() => Ar.ReadBulkArray<FVector2D>());
     }
 
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

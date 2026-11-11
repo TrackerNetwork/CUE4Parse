@@ -22,11 +22,11 @@ public class FChaosClothSimulationLodModel : FStructFallback
     public FChaosClothSimulationLodModel(FAssetArchive Ar) : base(Ar, "ChaosClothSimulationLodModel")
     {
         var bCooked = Ar.ReadBoolean();
-        WeightMaps = Ar.ReadMap(Ar.ReadFName, Ar.ReadArray<float>);
+        WeightMaps = Ar.ReadMap(Ar.ReadFName, () => Ar.ReadArray<float>());
         LODTransitionUpData = Ar.ReadArray(() => new FMeshToMeshVertData(Ar));
         LODTransitionDownData = Ar.ReadArray(() => new FMeshToMeshVertData(Ar));
-        VertexSets = Ar.ReadMap(Ar.ReadFName, Ar.ReadArray<int>);
-        FaceIntMaps = Ar.ReadMap(Ar.ReadFName, Ar.ReadArray<int>);
-        FaceSets = Ar.ReadMap(Ar.ReadFName, Ar.ReadArray<int>);
+        VertexSets = Ar.ReadMap(Ar.ReadFName, () => Ar.ReadArray<int>());
+        FaceIntMaps = Ar.ReadMap(Ar.ReadFName, () => Ar.ReadArray<int>());
+        FaceSets = Ar.ReadMap(Ar.ReadFName, () => Ar.ReadArray<int>());
     }
 }
