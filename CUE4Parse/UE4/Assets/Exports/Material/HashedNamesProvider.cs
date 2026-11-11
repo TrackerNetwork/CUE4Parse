@@ -25,8 +25,14 @@ public sealed class HashedNamesProvider
                 return;
             }
 
-            using StreamReader reader = new(stream);
-            _hashedNames = JsonConvert.DeserializeObject<ConcurrentDictionary<ulong, string>>(reader.ReadToEnd()) ?? [];
+            // Read token by token rather than JsonConvert.DeserializeObject<ConcurrentDictionary<ulong, string>>: Newtonsoft's
+            // dictionary contracts make generic instantiations Native AOT does not have.
+            using var reader = new JsonTextReader(new StreamReader(stream));
+            while (reader.Read())
+            {
+                if (reader.TokenType != JsonToken.PropertyName || !ulong.TryParse((string) reader.Value!, out var hash)) continue;
+                if (reader.Read() && reader.Value is string name) _hashedNames[hash] = name;
+            }
         }
         catch (Exception e)
         {
