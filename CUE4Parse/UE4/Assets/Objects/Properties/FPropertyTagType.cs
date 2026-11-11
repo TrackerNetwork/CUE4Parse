@@ -80,7 +80,8 @@ public abstract class FPropertyTagType
                 var search = storedEnum.SubstringAfter("::"); // Strip enum name on namespaced and enum class enums
                 var values = type.GetEnumNames();
                 var idx = Array.FindIndex(values, it => it == search);
-                return idx == -1 ? null : type.GetEnumValues().GetValue(idx);
+                // Not GetEnumValues(): it allocates an array of the enum type, which Native AOT may not have compiled.
+                return idx == -1 ? null : Enum.ToObject(type, type.GetEnumValuesAsUnderlyingType().GetValue(idx)!);
             //TODO There are also Enums stored as ByteProperty but UModel uses them nowhere besides in UE2
             case FPropertyTagType<UScriptMap> mapProp when type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>):
                 return CreateDictionary(type, mapProp.Value!.Properties);
@@ -107,7 +108,8 @@ public abstract class FPropertyTagType
         var typeArgs = type.GetGenericArguments();
         var keyType = typeArgs[0];
         var valueType = typeArgs[1];
-        var dictType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
+        // The requested Dictionary<,> itself when concrete: Native AOT cannot make new generic instantiations.
+        var dictType = type.IsInterface || type.IsAbstract ? typeof(Dictionary<,>).MakeGenericType(keyType, valueType) : type;
         var result = (IDictionary) Activator.CreateInstance(dictType, properties.Count)!;
         foreach (var kv in properties)
         {
@@ -122,7 +124,8 @@ public abstract class FPropertyTagType
     private Array CreateArray(Type type, List<FPropertyTagType> properties)
     {
         var contentType = type.GetElementType()!;
-        var result = Array.CreateInstance(contentType, properties.Count);
+        // From the requested array type itself, which exists natively under AOT (an element type's array may not).
+        var result = Array.CreateInstanceFromArrayType(type, properties.Count);
         for (var i = 0; i < properties.Count; i++)
         {
             result.SetValue(properties[i].GetValue(contentType), i);
@@ -133,7 +136,7 @@ public abstract class FPropertyTagType
     private IList CreateList(Type type, List<FPropertyTagType> properties)
     {
         var contentType = type.GenericTypeArguments[0];
-        var listType = typeof(List<>).MakeGenericType(contentType);
+        var listType = type.IsInterface || type.IsAbstract || type.IsArray ? typeof(List<>).MakeGenericType(contentType) : type;
         var result = (IList) Activator.CreateInstance(listType, properties.Count)!;
         foreach (var element in properties)
         {
