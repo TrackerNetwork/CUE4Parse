@@ -229,10 +229,10 @@ namespace CUE4Parse.UE4.Objects.Engine
                 AlreadyHandledStartupMaterialInstances = Ar.ReadArray(Ar.ReadFString);
             }
             CookedBulkDataInfoMap = Ar.ReadMap(Ar.ReadFString, () => new FCookedBulkDataInfo(Ar));
-            FilenameToTimeMap = Ar.ReadMap(Ar.ReadFString, Ar.Read<double>);
+            FilenameToTimeMap = Ar.ReadMap(Ar.ReadFString, () => Ar.Read<double>());
             TextureFileCacheWaste = Ar.Read<long>();
             if (Ar.Ver <= EUnrealEngineObjectUE3Version.ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS) Ar.Position += 8; // unknown
-            FilenameToCookedVersion = Ar.ReadMap(Ar.ReadFString, Ar.Read<int>);
+            FilenameToCookedVersion = Ar.ReadMap(Ar.ReadFString, () => Ar.Read<int>());
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_TEXTURE_FILECACHE_GUIDS)
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX) Ar.Position += 4; // unknown

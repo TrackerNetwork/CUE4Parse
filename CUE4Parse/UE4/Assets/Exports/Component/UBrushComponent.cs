@@ -19,7 +19,7 @@ public class UBrushComponent : UPrimitiveComponent
 
         if (Ar.Game < GAME_UE4_0)
         {
-            Ar.ReadArray(Ar.ReadBulkArray<byte>); // CachedPhysBrushData
+            Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysBrushData
         }
     }
 

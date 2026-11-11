@@ -22,7 +22,7 @@ public class UXDataTable : UObject
             return;
         }
 
-        Rows = Ar.ReadMap(Ar.Read<int>, () => new FStructFallback(Ar, rowStruct));
+        Rows = Ar.ReadMap(() => Ar.Read<int>(), () => new FStructFallback(Ar, rowStruct));
     }
 
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

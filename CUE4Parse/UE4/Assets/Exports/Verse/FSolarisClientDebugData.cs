@@ -18,8 +18,8 @@ public class FSolarisClientDebugData : ISolarisDebugData
         Functions = Ar.ReadArray<FFunction>();
         SmallTracepoints = Ar.ReadArray<FSmallTracepoint>();
         LargeTracepoints = Ar.ReadArray<FTracepoint>();
-        FunctionLookup = Ar.ReadMap(Ar.Read<ulong>, Ar.Read<int>);
-        CollisionLookup = Ar.ReadMap(Ar.ReadFString, Ar.Read<int>);
+        FunctionLookup = Ar.ReadMap(() => Ar.Read<ulong>(), () => Ar.Read<int>());
+        CollisionLookup = Ar.ReadMap(Ar.ReadFString, () => Ar.Read<int>());
     }
 
     public struct FFunction

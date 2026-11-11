@@ -35,19 +35,19 @@ public class FPerPlatformFloat : TPerPlatformProperty<float>
 {
     public FPerPlatformFloat() { }
     public FPerPlatformFloat(float value) { Default = value; }
-    public FPerPlatformFloat(FAssetArchive Ar) : base(Ar, Ar.Read<float>) { }
+    public FPerPlatformFloat(FAssetArchive Ar) : base(Ar, () => Ar.Read<float>()) { }
 }
 
 public class FPerPlatformInt : TPerPlatformProperty<int>
 {
     public FPerPlatformInt() { }
-    public FPerPlatformInt(FAssetArchive Ar) : base(Ar, Ar.Read<int>) { }
+    public FPerPlatformInt(FAssetArchive Ar) : base(Ar, () => Ar.Read<int>()) { }
 }
 
 public class FPerPlatformFrameRate : TPerPlatformProperty<FFrameRate>
 {
     public FPerPlatformFrameRate() { }
-    public FPerPlatformFrameRate(FAssetArchive Ar) : base(Ar, Ar.Read<FFrameRate>) { }
+    public FPerPlatformFrameRate(FAssetArchive Ar) : base(Ar, () => Ar.Read<FFrameRate>()) { }
 }
 
 public class FPerPlatformFString : TPerPlatformProperty<string>
